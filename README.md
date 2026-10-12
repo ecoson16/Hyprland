@@ -1,77 +1,105 @@
 # Hyprland Dotfiles
 
-My Hyprland setup and config backups for CachyOS/Arch Linux.
+My blue and black Hyprland setup for Arch Linux/CachyOS.
 
-## What's included
+## What's here
 
-- `hypr/`: Hyprland Lua config and Hyprlock config
-- `noctalia/`: Noctalia settings exports
-- SDDM: configured separately using the Pixie theme
+- `hypr/`: Hyprland Lua config, Hyprlock, and Lua editor settings
+- `noctalia/noctalia-config.toml`: my Noctalia user config
+- `noctalia/settings.toml`: saved Noctalia GUI settings
+- `noctalia/noctalia-full-config.toml`: full snapshot for reference
 
-## Install the basics
+## 1. Install
 
-On CachyOS/Arch:
+Install the apps used by my config, or edit their commands in `hyprland.lua` to match your setup.
 
 ```bash
-sudo pacman -S hyprland hyprlock git
+sudo pacman -S hyprland hyprlock git xfce4-terminal thunar network-manager-applet
 ```
 
-Install Noctalia using its official installation instructions:
+Install Noctalia from its official instructions:
 https://docs.noctalia.dev/
 
-Install Pixie SDDM theme:
-https://github.com/xCaptaiN09/pixie-sddm
+This config uses Hyprland's Lua configuration format. Make sure your Hyprland build supports Lua config.
 
-My Hyprland config repository:
-https://github.com/ecoson16/Hyprland
-
-## Restore Hyprland
-
-Back up your current config first, then copy the repository's `hypr` folder into `~/.config/hypr`.
-
-If you cloned this repository into `~/Hyprland`:
+## 2. Download this repo
 
 ```bash
+git clone https://github.com/ecoson16/Hyprland.git ~/Hyprland
+```
+
+## 3. Restore Hyprland and Hyprlock
+
+Back up your current config, then copy mine:
+
+```bash
+[ -d ~/.config/hypr ] && cp -a ~/.config/hypr ~/.config/hypr.backup-$(date +%Y%m%d-%H%M%S)
 mkdir -p ~/.config/hypr
-cp -a ~/.config/hypr ~/.config/hypr.backup 2>/dev/null || true
 cp -a ~/Hyprland/hypr/. ~/.config/hypr/
 ```
 
-Review the config before logging out. It starts Noctalia, NetworkManager's applet, and `hyprpolkitagent`. It also uses XFCE Terminal, Thunar, Google Chrome, and Prism Launcher, so install those apps or change the commands in `hyprland.lua`.
+Review the config before logging out. It launches Noctalia, `nm-applet`, and `hyprpolkitagent`. It also uses Google Chrome and Prism Launcher. Install those apps or change their commands if needed.
 
-Reload Hyprland with:
+The Hyprlock background points to `~/Pictures/wallpaper.jpg`. Put your wallpaper there or edit `hyprlock.conf`.
+
+Reload Hyprland:
 
 ```bash
 hyprctl reload
 ```
 
-## Restore Noctalia
+## 4. Restore Noctalia
 
-Copy the preferred exported config file to Noctalia's active settings location. On current Noctalia versions, user settings are usually stored under `~/.config/noctalia/` or `~/.local/state/noctalia/`, depending on version and install. Use Noctalia's own import/config options when available, and avoid overwriting its whole configuration blindly.
+For Noctalia v5+, user config goes in `~/.config/noctalia/` and GUI-managed settings go in `~/.local/state/noctalia/settings.toml`.
 
-The `noctalia-full-config.toml` file is a full snapshot; `noctalia-config.toml` and `settings.toml` are smaller exports. Choose one appropriate for your installed version rather than copying all three over each other.
-
-Some settings refer to this machine's wallpaper and screenshot paths. Update those paths on another computer.
-
-## Restore Hyprlock
-
-The Hyprlock config is `hypr/hyprlock.conf`. It uses `~/Pictures/wallpaper.jpg` as its background, so place your wallpaper there or edit the path.
-
-## Configure SDDM
-
-Install Pixie SDDM using the theme project's instructions. Then configure SDDM to use it in `/etc/sddm.conf.d/` or `/etc/sddm.conf`.
-
-Example:
-
-```ini
-[Theme]
-Current=pixie-sddm
+```bash
+mkdir -p ~/.config/noctalia ~/.local/state/noctalia
+cp ~/Hyprland/noctalia/noctalia-config.toml ~/.config/noctalia/config.toml
+cp ~/Hyprland/noctalia/settings.toml ~/.local/state/noctalia/settings.toml
 ```
 
-The theme name must match the installed directory under `/usr/share/sddm/themes/`. Keep a working alternative login method before changing your display manager.
+The full config is a snapshot for reference. Don't copy `noctalia-full-config.toml` into the active config folder as another config file.
+
+Some settings use paths from my computer, including wallpaper and screenshot folders. Change those paths to match yours. Then validate the config:
+
+```bash
+noctalia config validate
+```
+
+## 5. Install Pixie SDDM
+
+Theme project: https://github.com/xCaptaiN09/pixie-sddm
+
+On Arch/CachyOS, install SDDM and the theme's Qt6 dependencies:
+
+```bash
+sudo pacman -S sddm qt6-declarative qt6-svg git
+git clone https://github.com/xCaptaiN09/pixie-sddm.git ~/pixie-sddm
+cd ~/pixie-sddm
+sudo ./install.sh
+```
+
+Set the installed theme to `pixie`:
+
+```bash
+printf '[Theme]\nCurrent=pixie\n' | sudo tee /etc/sddm.conf.d/10-theme.conf
+```
+
+If you're currently using LightDM, switch display managers before rebooting:
+
+```bash
+sudo systemctl disable lightdm
+sudo systemctl enable sddm
+```
+
+If you use a different display manager, disable that service instead of `lightdm`. Don't enable two display managers at once. You can test the theme before switching with:
+
+```bash
+sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/pixie
+```
 
 ## Notes
 
-- These are backups, not a universal installer. Review paths and app commands before restoring.
-- Do not commit passwords, private keys, authentication tokens, or other secrets.
-- SDDM system config and installed themes may need root permissions.
+- Back up existing configs before replacing them.
+- Check wallpaper paths and app commands after restoring.
+- Never upload passwords, tokens, private keys, or other secrets.
