@@ -39,7 +39,7 @@ local terminal    = "xfce4-terminal"
 local fileManager = "thunar"
 local menu        = "noctalia msg panel-toggle launcher"
 local browser = "google-chrome-stable"
-local minecraft = "flatpak run org.prismlauncher.PrismLauncher"
+local minecraftLauncher = "flatpak run org.prismlauncher.PrismLauncher"
 
 
 -------------------
@@ -293,7 +293,7 @@ hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
-hl.bind(mainMod .. " + P", hl.dsp.exec_cmd(minecraft))
+hl.bind(mainMod .. " + M", hl.dsp.exec_cmd(minecraftLauncher))
 hl.bind(secondMod .. " + S", hl.dsp.exec_cmd("noctalia msg screenshot-region"))
 hl.bind("ALT + F4", hl.dsp.window.close())
 
