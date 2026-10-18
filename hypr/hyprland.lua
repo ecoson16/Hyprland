@@ -314,7 +314,7 @@ hl.bind(secondMod .. " + down",  hl.dsp.window.move({ direction = "down" }))
 
 -- Window Management with F keys
 hl.bind("F11", hl.dsp.window.fullscreen({ action = "toggle" }))
-hl.bind("F2", function()
+hl.bind("F12", function()
     touchpadEnabled = not touchpadEnabled
 
     hl.device({
